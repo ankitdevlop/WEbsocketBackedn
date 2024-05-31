@@ -1,13 +1,21 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const cors =require('cors');
+const router = require('./Routes/route');
 const app = express();
+const {connect}=require("./db")
+app.use(cors())
+app.use(bodyParser.json({limit:"50mb"}))
+app.use(bodyParser.urlencoded({extended:true,limit:"50mb"}))
 const server = http.createServer(app);
 const io = new Server(server);
 
-let waitingUser = null;
 
+app.use("/api",router)
+let waitingUser = null;
+connect()
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
